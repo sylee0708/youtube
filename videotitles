@@ -1,0 +1,38 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from bs4 import BeautifulSoup
+
+driver = webdriver.Chrome('C:/Users/soyeon/Desktop/chromedriver.exe')
+driver.get('https://www.youtube.com/user/Thejkjtv/videos?view=0&sort=dd&shelf_id=0')
+page = driver.page_source
+import time
+
+time.sleep(5)
+endk = 5
+while endk:
+    driver.find_element_by_tag_name('body').send_keys(Keys.END)
+    time.sleep(0.3)
+    endk -= 1
+    soup = BeautifulSoup(page,'lxml')
+    all_title = soup.find_all('a','yt-simple-endpoint style-scope ytd-grid-video-renderer')
+    title = [soup.find_all('a','yt-simple-endpoint style-scope ytd-grid-video-renderer')[n].string for n in range(0,len(all_title))]
+    youtube_video_list = []
+
+    x = 0		#조회수의 index
+    y = 1		#업로드 시점의 index
+
+    for i in range(0,len(all_title)):
+        roww = []
+        roww.append(title[i])
+        x += 2		#조회수만 append
+        y += 2		#업로드 시점만 append
+        youtube_video_list.append(roww)
+
+page = driver.page_source
+
+import csv
+csvfile = open('C:/Users/soyeon/Desktop/test9.csv',"w",newline="")
+csvwriter = csv.writer(csvfile)
+for row in youtube_video_list:
+    csvwriter.writerow(row)
+csvfile.close()
